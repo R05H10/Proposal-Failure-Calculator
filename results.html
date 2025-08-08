@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal Failure Rate - Results</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            
+            --white: #ffffff;
+            --white-95: rgba(255, 255, 255, 0.95);
+            --white-90: rgba(255, 255, 255, 0.9);
+            --white-80: rgba(255, 255, 255, 0.8);
+            --white-60: rgba(255, 255, 255, 0.6);
+            --white-40: rgba(255, 255, 255, 0.4);
+            --white-20: rgba(255, 255, 255, 0.2);
+            --white-10: rgba(255, 255, 255, 0.1);
+            --white-05: rgba(255, 255, 255, 0.05);
+            
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #374151;
+            --text-muted: #9ca3af;
+            
+            --dark: #1f2937;
+            --dark-light: #374151;
+            --shadow-light: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --shadow-heavy: 0 16px 48px rgba(0, 0, 0, 0.16);
+            --shadow-button: 0 10px 25px rgba(99, 102, 241, 0.3);
+            --shadow-button-hover: 0 15px 35px rgba(99, 102, 241, 0.4);
+            
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            --spacing-3xl: 64px;
+            
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #667eea 75%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow-x: hidden;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M20 20c0-11.046-8.954-20-20-20v20h20z'/%3E%3C/g%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpolygon points='40,0 80,40 40,80 0,40'/%3E%3C/g%3E%3C/svg%3E");
+            background-position: 0 0, 20px 20px, 40px 40px;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 1;
+            animation: backgroundMove 60s linear infinite;
+        }
+        
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+        
+        .floating-element {
+            position: fixed;
+            border-radius: 50%;
+            background: var(--white-10);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .floating-element:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 15%;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .floating-element:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            top: 70%;
+            right: 10%;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+        
+        .floating-element:nth-child(3) {
+            width: 140px;
+            height: 140px;
+            bottom: 15%;
+            left: 10%;
+            animation: float 10s ease-in-out infinite;
+            animation-delay: -2s;
+        }
+        
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            right: 25%;
+            animation: float 14s ease-in-out infinite reverse;
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotate(0deg);
+                opacity: 0.6;
+            }
+            33% { 
+                transform: translateY(-20px) translateX(10px) rotate(120deg);
+                opacity: 0.8;
+            }
+            66% { 
+                transform: translateY(10px) translateX(-10px) rotate(240deg);
+                opacity: 0.4;
+            }
+        }
+
+        .container {
+            background: var(--white);
+            border-radius: var(--border-radius-xl);
+            padding: var(--spacing-2xl);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 
+                var(--shadow-heavy),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+            transition: var(--transition-medium);
+            transform: translateY(0);
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--border-radius-xl);
+            z-index: -1;
+        }
+        
+        .container:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xl);
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+            transition: var(--transition-medium);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .result-item:hover {
+            background: rgba(99, 102, 241, 0.05);
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin: 0 calc(-1 * var(--spacing-lg));
+            border-radius: var(--border-radius-md);
+            transform: translateX(4px);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item span:first-child {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .failure-rate {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--danger-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 8px rgba(239, 68, 68, 0.3));
+            letter-spacing: -0.01em;
+        }
+        
+        .failure-rate.success {
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.3));
+        }
+
+        .malayalam-advice {
+            font-style: italic;
+            line-height: 1.8;
+            direction: rtl;
+            text-align: right;
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            margin-top: var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Arial', 'Noto Sans Malayalam', sans-serif;
+            transition: var(--transition-medium);
+        }
+        
+        .malayalam-advice::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.02) 0%, transparent 50%, rgba(0, 0, 0, 0.02) 100%);
+            border-radius: var(--border-radius-md);
+            z-index: -1;
+        }
+
+        /* Success state (up to 40% failure rate) */
+        .malayalam-advice.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-left: 4px solid #10b981;
+            color: #059669;
+        }
+
+        /* High risk state (above 40% failure rate) */
+        .malayalam-advice.high-risk {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-left: 4px solid #ef4444;
+            color: #dc2626;
+        }
+
+        .prediction-message {
+            margin-bottom: var(--spacing-md);
+            font-weight: 700;
+            font-size: 1.15rem;
+            text-align: center;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .prediction-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.02) 0%, transparent 50%, rgba(0, 0, 0, 0.02) 100%);
+            border-radius: var(--border-radius-md);
+            z-index: -1;
+        }
+
+        .advice-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--success-gradient);
+            color: var(--white);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-medium);
+            margin-top: var(--spacing-xl);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.02em;
+            box-shadow: var(--shadow-button);
+        }
+        
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--white-20), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-button-hover);
+        }
+        
+        .back-btn:hover::before {
+            left: 100%;
+        }
+        
+        .back-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: var(--spacing-xl);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: var(--spacing-md);
+            }
+            
+            .container {
+                padding: var(--spacing-xl) var(--spacing-lg);
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: var(--spacing-lg);
+            }
+            
+            .floating-element {
+                opacity: 0.6;
+            }
+            
+            .floating-element:nth-child(1),
+            .floating-element:nth-child(3) {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .floating-element:nth-child(2),
+            .floating-element:nth-child(4) {
+                width: 60px;
+                height: 60px;
+            }
+
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .malayalam-advice {
+                font-size: 1.1rem;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    
+    <div class="container">
+        <h1>💕 Proposal Results</h1>
+        <div id="results-content">
+            <div class="loading">Loading your results...</div>
+        </div>
+        <a href="index.html" class="back-btn">🔙 Calculate Again</a>
+    </div>
+
+    <script>
+        // Get data from URL parameters or localStorage
+        function getResultsData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const data = urlParams.get('data');
+            
+            if (data) {
+                return JSON.parse(decodeURIComponent(data));
+            } else {
+                // Fallback to localStorage
+                const storedData = localStorage.getItem('proposalResults');
+                if (storedData) {
+                    return JSON.parse(storedData);
+                }
+            }
+            return null;
+        }
+
+        // Display results
+        function displayResults() {
+            const data = getResultsData();
+            const resultsContent = document.getElementById('results-content');
+            
+            if (!data) {
+                resultsContent.innerHTML = `
+                    <div class="loading">
+                        No results data found. Please go back and calculate again.
+                    </div>
+                `;
+                return;
+            }
+
+            // Determine advice class based on failure rate
+            let adviceClass = "";
+            if (data.finalFailureRate <= 40) {
+                adviceClass = "success";
+            } else {
+                adviceClass = "high-risk";
+            }
+
+            resultsContent.innerHTML = `
+                <div class="result-item">
+                    <span><span class="success-icon">👤</span>Proposer:</span>
+                    <span class="result-value">${data.name1} (${data.gender1.charAt(0).toUpperCase() + data.gender1.slice(1)})</span>
+                </div>
+                <div class="result-item">
+                    <span>💖 Crush:</span>
+                    <span class="result-value">${data.name2} (${data.gender2.charAt(0).toUpperCase() + data.gender2.slice(1)})</span>
+                </div>
+                <div class="result-item">
+                    <span>💔 Failed Proposals:</span>
+                    <span class="result-value">${data.failures}</span>
+                </div>
+                <div class="result-item">
+                    <span>💕 Previous Relationships:</span>
+                    <span class="result-value">${data.previousEx === '0' ? 'None' : data.previousEx === '5' ? '6+' : data.previousEx === '4' ? '4-5' : data.previousEx}</span>
+                </div>
+                <div class="result-item">
+                    <span>💘 Total Crushes:</span>
+                    <span class="result-value">${data.crushes === '0' ? 'None' : data.crushes === '5' ? '20+' : data.crushes === '4' ? '11-20' : data.crushes === '3' ? '6-10' : data.crushes === '2' ? '3-5' : '1-2'}</span>
+                </div>
+                <div class="result-item">
+                    <span>📈 Experience Factor:</span>
+                    <span class="result-value">${data.experienceRate.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>💝 Name Compatibility:</span>
+                    <span class="result-value">${data.nameCompatibility.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>⚤ Gender Compatibility:</span>
+                    <span class="result-value">${data.genderCompatibility.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>🧠 Personality Score:</span>
+                    <span class="result-value">${data.personalityScore.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>✨ Attractiveness Index:</span>
+                    <span class="result-value">${data.attractivenessIndex.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>💖 Crush Experience Factor:</span>
+                    <span class="result-value">${data.crushFactor.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>💪 Relationship Readiness:</span>
+                    <span class="result-value">${data.relationshipReadiness.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>😎 Confidence Level:</span>
+                    <span class="result-value">${data.confidenceRate.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>⚠️ Risk Assessment:</span>
+                    <span class="result-value">${data.riskFactor.toFixed(1)}%</span>
+                </div>
+                <div class="result-item">
+                    <span>🎯 Final Failure Probability:</span>
+                    <span class="result-value failure-rate ${data.finalFailureRate <= 40 ? 'success' : ''}">${data.finalFailureRate.toFixed(1)}%</span>
+                </div>
+                <div class="result-item advice-container">
+                    <span class="prediction-message">${data.predictionMessage}</span>
+                    <div style="margin-top: 10px; margin-bottom: 8px; font-weight: 700; color: ${data.headerColor}; font-size: 1rem;">${data.adviceHeader}</div>
+                    <div class="malayalam-advice ${adviceClass}">${data.geminiAdvice}</div>
+                </div>
+            `;
+        }
+
+        // Load results when page loads
+        document.addEventListener('DOMContentLoaded', displayResults);
+    </script>
+</body>
+</html>

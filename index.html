@@ -5,291 +5,669 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proposal Failure Rate Calculator</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            
+            --white: #ffffff;
+            --white-95: rgba(255, 255, 255, 0.95);
+            --white-90: rgba(255, 255, 255, 0.9);
+            --white-80: rgba(255, 255, 255, 0.8);
+            --white-60: rgba(255, 255, 255, 0.6);
+            --white-40: rgba(255, 255, 255, 0.4);
+            --white-20: rgba(255, 255, 255, 0.2);
+            --white-10: rgba(255, 255, 255, 0.1);
+            --white-05: rgba(255, 255, 255, 0.05);
+            
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #374151;
+            --text-muted: #9ca3af;
+            
+            --dark: #1f2937;
+            --dark-light: #374151;
+            --shadow-light: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --shadow-heavy: 0 16px 48px rgba(0, 0, 0, 0.16);
+            --shadow-button: 0 10px 25px rgba(99, 102, 241, 0.3);
+            --shadow-button-hover: 0 15px 35px rgba(99, 102, 241, 0.4);
+            
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            --spacing-3xl: 64px;
+            
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-medium: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #667eea 75%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: var(--spacing-lg);
             position: relative;
             overflow-x: hidden;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-
-        /* Animated background elements */
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
         body::before {
             content: '';
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: 10%;
-            left: 10%;
-            animation: float 6s ease-in-out infinite;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
         }
-
+        
         body::after {
             content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            bottom: 10%;
-            right: 10%;
-            animation: float 8s ease-in-out infinite reverse;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 500px;
-            position: relative;
+            height: 100%;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M20 20c0-11.046-8.954-20-20-20v20h20z'/%3E%3C/g%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpolygon points='40,0 80,40 40,80 0,40'/%3E%3C/g%3E%3C/svg%3E");
+            background-position: 0 0, 20px 20px, 40px 40px;
+            opacity: 0.6;
+            pointer-events: none;
             z-index: 1;
+            animation: backgroundMove 60s linear infinite;
         }
-
+        
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-xl);
+            padding: var(--spacing-3xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1), 0 8px 25px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 720px;
+            position: relative;
+            z-index: 2;
+            transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+        }
+        
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15), 0 12px 35px rgba(0, 0, 0, 0.1);
+        }
+        
         h1 {
             text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2rem;
+            color: var(--text-primary);
+            font-size: 3rem;
             font-weight: 700;
-            background: linear-gradient(45deg, #fff, #e2e8f0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: var(--spacing-md);
+            letter-spacing: -0.025em;
+            line-height: 1.1;
         }
-
+        
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-3xl);
+            font-weight: 400;
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .form-container {
+            display: grid;
+            gap: var(--spacing-lg);
+        }
+        
         .form-group {
-            margin-bottom: 25px;
             position: relative;
         }
-
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+        
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #e2e8f0;
+            color: var(--text-primary);
             font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
+            margin-bottom: var(--spacing-sm);
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
-
+        
         input, select {
             width: 100%;
-            padding: 15px 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 2px solid #d1d5db;
+            border-radius: var(--border-radius-md);
+            background: var(--white);
+            color: var(--text-primary);
             font-size: 1rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            font-weight: 500;
+            transition: all var(--transition-medium);
+            font-family: inherit;
+            line-height: 1.5;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-
+        
         input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--text-muted);
+            font-weight: 400;
         }
-
+        
         input:focus, select:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            background: var(--white);
+            border-color: #6366f1;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15), 0 0 0 3px rgba(99, 102, 241, 0.1);
+            color: var(--text-primary);
         }
-
+        
+        input:hover, select:hover {
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 16px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 48px;
+        }
+        
         select option {
-            background: #4a5568;
-            color: white;
+            background: var(--white);
+            color: var(--text-primary);
+            padding: var(--spacing-sm);
+            font-weight: 500;
         }
-
+        
         .calculate-btn {
             width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: var(--spacing-lg) var(--spacing-xl);
+            background: var(--accent-gradient);
+            color: var(--white);
             border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            border-radius: var(--border-radius-lg);
+            font-size: 1.125rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-medium);
+            margin: var(--spacing-3xl) 0 var(--spacing-lg) 0;
             position: relative;
             overflow: hidden;
-            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: var(--shadow-button);
+            font-family: inherit;
         }
-
+        
+        .calculate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left var(--transition-slow);
+        }
+        
+        .calculate-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width var(--transition-medium), height var(--transition-medium);
+        }
+        
         .calculate-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            box-shadow: var(--shadow-button-hover);
         }
-
+        
+        .calculate-btn:hover::before {
+            left: 100%;
+        }
+        
+        .calculate-btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        
         .calculate-btn:active {
             transform: translateY(-1px);
         }
-
+        
         .calculate-btn:disabled {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-
+        
+        .calculate-btn:disabled:hover {
+            box-shadow: var(--shadow-button);
+        }
+        
+        .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+        
         .loading {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--white-20);
             border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
+            border-top-color: var(--white);
+            animation: spin 0.8s linear infinite;
+            margin-right: var(--spacing-sm);
+            vertical-align: middle;
         }
-
+        
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
+        
         #result {
-            margin-top: 30px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.5s ease;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-xl);
+            background: #f8fafc;
+            border-radius: var(--border-radius-lg);
+            border: 2px solid #e5e7eb;
+            display: none;
+            box-shadow: var(--shadow-light);
         }
-
+        
         #result.show {
-            opacity: 1;
-            transform: translateY(0);
+            display: block;
+            animation: slideInUp var(--transition-slow) ease-out;
         }
-
-        #result.error {
-            background: rgba(255, 107, 107, 0.2);
-            border-color: rgba(255, 107, 107, 0.3);
-            color: #fed7d7;
+        
+        @keyframes slideInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(24px) scale(0.98); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
-
+        
         .result-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e2e8f0;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid #e5e7eb;
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+            font-weight: 500;
         }
-
+        
+        .result-item:hover {
+            padding-left: var(--spacing-sm);
+            background: #f1f5f9;
+            margin: 0 calc(-1 * var(--spacing-sm));
+            border-radius: var(--border-radius-sm);
+        }
+        
         .result-item:last-child {
             border-bottom: none;
         }
-
-        .result-item span:first-child {
-            font-weight: 600;
-        }
-
+        
         .result-value {
             font-weight: 700;
-            font-size: 1.1rem;
+            color: #2563eb;
+            font-size: 1.05rem;
         }
-
+        
         .failure-rate {
             font-size: 1.5rem;
-            background: linear-gradient(45deg, #ff4757, #ff3838);
+            font-weight: 800;
+            background: var(--danger-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-weight: 900;
         }
-
-        .malayalam-advice {
-            font-style: italic;
-            color: #ff3838;
-            line-height: 1.8;
-            direction: rtl;
-            text-align: right;
-            font-size: 1.2rem;
-            font-weight: 700;
-            background: rgba(255, 56, 56, 0.15);
-            padding: 20px;
-            border-radius: 12px;
-            border: 2px solid #ff4757;
-            border-left: 6px solid #ff3838;
-            margin-top: 15px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            box-shadow: 0 4px 15px rgba(255, 56, 56, 0.3);
-            font-family: 'Arial', 'Noto Sans Malayalam', sans-serif;
+        
+        .failure-rate.success {
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-
+        
         .prediction-message {
-            margin-bottom: 12px;
+            font-size: 1.25rem;
             font-weight: 700;
-            font-size: 1.1rem;
-            color: #e2e8f0;
+            color: var(--text-primary);
+            text-align: center;
+            display: block;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.4;
         }
-
+        
+        .malayalam-advice {
+            background: #f8fafc;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            border-left: 4px solid;
+            transition: transform var(--transition-medium);
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        .malayalam-advice:hover {
+            transform: translateX(2px);
+        }
+        
+        .malayalam-advice.success {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.04));
+            color: #047857;
+        }
+        
+        .malayalam-advice.moderate {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.04));
+            color: #b45309;
+        }
+        
+        .malayalam-advice.high-risk {
+            border-left-color: #ef4444;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.04));
+            color: #b91c1c;
+        }
+        
         .advice-container {
             flex-direction: column;
-            align-items: flex-start;
-            padding: 20px 0;
-            border-top: 2px solid rgba(255, 255, 255, 0.1);
-            margin-top: 10px;
+            align-items: stretch;
+            padding-top: var(--spacing-lg);
+            border-top: 2px solid #e5e7eb;
+            margin-top: var(--spacing-lg);
         }
-
-        @media (max-width: 480px) {
-            .malayalam-advice {
-                font-size: 1rem;
-                padding: 12px;
-                line-height: 1.6;
-            }
+        
+        .error {
+            background: rgba(239, 68, 68, 0.1) !important;
+            border: 2px solid rgba(239, 68, 68, 0.2) !important;
+            color: #b91c1c !important;
         }
-
+        
         .success-icon {
             display: inline-block;
-            margin-right: 8px;
+            margin-right: var(--spacing-sm);
         }
-
-        @media (max-width: 480px) {
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: var(--spacing-md);
+            }
+            
             .container {
-                padding: 30px 20px;
-                margin: 10px;
+                padding: var(--spacing-2xl);
+                border-radius: var(--border-radius-lg);
             }
             
             h1 {
-                font-size: 1.5rem;
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.125rem;
+                margin-bottom: var(--spacing-2xl);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            input, select {
+                padding: var(--spacing-md) var(--spacing-lg);
+                font-size: 1rem;
+            }
+            
+            .calculate-btn {
+                padding: var(--spacing-lg);
+                font-size: 1rem;
+                margin: var(--spacing-2xl) 0 var(--spacing-lg) 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: var(--spacing-sm);
+            }
+            
+            .container {
+                padding: var(--spacing-xl);
+            }
+            
+            h1 {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .form-container {
+                gap: var(--spacing-lg);
+            }
+            
+            input, select {
+                padding: var(--spacing-md);
+            }
+            
+            .calculate-btn {
+                padding: var(--spacing-md) var(--spacing-lg);
+                margin: var(--spacing-xl) 0;
+                font-size: 0.95rem;
             }
             
             .result-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 5px;
+                gap: var(--spacing-xs);
+                padding: var(--spacing-lg) 0;
             }
+            
+            .malayalam-advice {
+                font-size: 1rem;
+                padding: var(--spacing-md);
+                line-height: 1.7;
+            }
+            
+            .prediction-message {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Enhanced animations and micro-interactions */
+        .container::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #667eea);
+            background-size: 400% 400%;
+            border-radius: var(--border-radius-xl);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity var(--transition-medium);
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        .container:hover::after {
+            opacity: 0.1;
+        }
+        
+        /* Floating background elements */
+        .floating-element {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 15%;
+            animation: float 25s ease-in-out infinite reverse;
+        }
+        
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation: float 18s ease-in-out infinite;
+        }
+        
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            bottom: 15%;
+            right: 10%;
+            animation: float 22s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.3;
+            }
+            25% { 
+                transform: translateY(-20px) rotate(90deg);
+                opacity: 0.5;
+            }
+            50% { 
+                transform: translateY(-10px) rotate(180deg);
+                opacity: 0.3;
+            }
+            75% { 
+                transform: translateY(-30px) rotate(270deg);
+                opacity: 0.4;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--white-10);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
 <body>
+    <!-- Floating background elements -->
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    
     <div class="container">
         <h1>� Proposal Failure Calculator</h1>
         
@@ -333,12 +711,12 @@
                 <label for="previousEx">Previous Relationships:</label>
                 <select id="previousEx" required>
                     <option value="">Select experience level</option>
-                    <option value="0">None (0)</option>
-                    <option value="1">Limited (1)</option>
-                    <option value="2">Some (2-3)</option>
-                    <option value="3">Good (3-4)</option>
+                    <option value="0">Single Forever (0)</option>
+                    <option value="1"> 1 </option>
+                    <option value="2"> (2-3)</option>
+                    <option value="3">  (3-4)</option>
                     <option value="4">Experienced (4-5)</option>
-                    <option value="5">Very Experienced (6+)</option>
+                    <option value="5">Expert (6+)</option>
                 </select>
             </div>
             
@@ -349,9 +727,9 @@
                     <option value="0">None (0)</option>
                     <option value="1">Very Few (1-2)</option>
                     <option value="2">Few (3-5)</option>
-                    <option value="3">Several (6-10)</option>
-                    <option value="4">Many (11-20)</option>
-                    <option value="5">Too Many to Count (20+)</option>
+                    <option value="3">Miniature Kozhi (6-10)</option>
+                    <option value="4">Kozhi (11-20)</option>
+                    <option value="5">Kattu Kozhi (20+)</option>
                 </select>
             </div>
             
@@ -444,23 +822,35 @@
                 // Determine prediction message based on failure rate
                 let predictionMessage = "";
                 
-                if (finalFailureRate >= 80) {
-                    predictionMessage = "💔 Almost Certain Failure! Prepare for rejection.";
-                } else if (finalFailureRate >= 60) {
-                    predictionMessage = "� High Failure Risk! Very likely to be rejected.";
-                } else if (finalFailureRate >= 40) {
-                    predictionMessage = "🤔 Moderate Failure Risk. Proceed with caution.";
-                } else if (finalFailureRate >= 20) {
-                    predictionMessage = "💫 Low Failure Risk. Good chances!";
+                if (finalFailureRate < 30) {
+                    predictionMessage = "🎉 High Success Rate! Go for it confidently!";
+                } else if (finalFailureRate <= 60) {
+                    predictionMessage = "💔 Almost Certain Rejection! Prepare for failure.";
+                } else if (finalFailureRate <= 75) {
+                    predictionMessage = "� High Rejection Risk! Very likely to be rejected.";
                 } else {
-                    predictionMessage = "🎉 Minimal Failure Risk! Go for it!";
+                    predictionMessage = "💔 Almost Certain Rejection! Prepare for failure.";
                 }
                 
-                // Get negative advice from Gemini API in Malayalam
+                // Get contextual advice from Gemini API in Malayalam
                 console.log('Calling Gemini API for Malayalam advice...'); // Debug log
-                btnText.innerHTML = '<span class="loading"></span>Getting brutal advice...';
-                const geminiAdvice = await getDemotivatingAdvice(name1, name2, finalFailureRate, previousEx, failures, crushes, gender1, gender2);
+                btnText.innerHTML = '<span class="loading"></span>Getting AI advice...';
+                const geminiAdvice = await getContextualAdvice(name1, name2, finalFailureRate, previousEx, failures, crushes, gender1, gender2);
                 console.log('Final Malayalam advice to display:', geminiAdvice); // Debug log
+                
+                // Determine advice header and CSS class based on failure rate
+                let adviceHeader = "";
+                let headerColor = "";
+                let adviceClass = "";
+                if (finalFailureRate <= 40) {
+                    adviceHeader = "🤖 AI Encouraging Advice (Malayalam):";
+                    headerColor = "#27ae60"; // Simple green
+                    adviceClass = "success";
+                } else {
+                    adviceHeader = "🤖 AI Reality Check (Malayalam):";
+                    headerColor = "#e74c3c"; // Simple red
+                    adviceClass = "high-risk";
+                }
                 
                 const resultHTML = `
                     <div class="result-item">
@@ -521,17 +911,46 @@
                     </div>
                     <div class="result-item">
                         <span>🎯 Final Failure Probability:</span>
-                        <span class="result-value failure-rate">${finalFailureRate.toFixed(1)}%</span>
+                        <span class="result-value failure-rate ${finalFailureRate <= 40 ? 'success' : ''}">${finalFailureRate.toFixed(1)}%</span>
                     </div>
                     <div class="result-item advice-container">
                         <span class="prediction-message">${predictionMessage}</span>
-                        <div style="margin-top: 10px; margin-bottom: 8px; font-weight: 700; color: #ff4757; font-size: 1rem;">🤖 AI Brutal Truth (Malayalam):</div>
-                        <div class="malayalam-advice">${geminiAdvice}</div>
+                        <div style="margin-top: 10px; margin-bottom: 8px; font-weight: 700; color: ${headerColor}; font-size: 1rem;">${adviceHeader}</div>
+                        <div class="malayalam-advice ${adviceClass}">${geminiAdvice}</div>
                     </div>
                 `;
                 
-                showResult(resultHTML, false);
-                resetButton();
+                // Store all calculation data for the results page
+                const resultsData = {
+                    name1,
+                    gender1,
+                    name2,
+                    gender2,
+                    failures,
+                    previousEx,
+                    crushes,
+                    experienceRate,
+                    nameCompatibility,
+                    genderCompatibility,
+                    personalityScore,
+                    attractivenessIndex,
+                    crushFactor,
+                    relationshipReadiness,
+                    confidenceRate,
+                    riskFactor,
+                    finalFailureRate,
+                    predictionMessage,
+                    adviceHeader,
+                    headerColor,
+                    geminiAdvice
+                };
+
+                // Store data in localStorage as backup
+                localStorage.setItem('proposalResults', JSON.stringify(resultsData));
+                
+                // Redirect to results page
+                window.location.href = 'results.html';
+                
             } catch (error) {
                 console.error('Error in calculation:', error);
                 showResult("An error occurred while calculating. Please try again.", true);
@@ -763,8 +1182,8 @@
             return Math.max(0.2, modifier); // Minimum 20% of base score
         }
         
-        // Function to get demotivating advice in Malayalam from Gemini API
-        async function getDemotivatingAdvice(proposerName, crushName, failureRate, previousEx, failures, crushes, gender1, gender2) {
+        // Function to get contextual advice in Malayalam from Gemini API based on failure rate
+        async function getContextualAdvice(proposerName, crushName, failureRate, previousEx, failures, crushes, gender1, gender2) {
             const exText = previousEx === '0' ? 'no previous relationships' : 
                           previousEx === '5' ? '6+ previous relationships' : 
                           previousEx === '4' ? '4-5 previous relationships' : 
@@ -778,22 +1197,45 @@
             
             const relationshipType = gender1 === gender2 ? 'same-gender' : 'different-gender';
             
-            const prompt = `You are a brutal, pessimistic relationship advisor. Generate an extremely negative, soul-crushing, demotivating message in pure Malayalam script for ${proposerName} (${gender1}) who wants to propose to ${crushName} (${gender2}). 
+            let prompt = "";
+            
+            if (failureRate <= 40) {
+                // Positive advice for success rate
+                prompt = `You are an encouraging, positive relationship advisor. Generate an optimistic, motivating, and encouraging message in pure Malayalam script for ${proposerName} (${gender1}) who wants to propose to ${crushName} (${gender2}). 
 
 Context:
-- Failure rate: ${failureRate.toFixed(1)}% (very high chance of rejection)
+- Failure rate: ${failureRate.toFixed(1)}% (high chance of success!)
 - Relationship history: ${exText}
 - Crush history: ${crushText}
 - Failed proposals: ${failures}
 - Relationship type: ${relationshipType}
 
-Write ONLY in Malayalam script (മലയാളം). Be brutally honest and devastating. Tell them:
-1. Why they will definitely be rejected
-2. Why their history proves they're unlovable
-3. Why they should give up on love entirely
-4. How pathetic their situation is
+Write ONLY in Malayalam script (മലയാളം). Be positive and encouraging. Tell them:
+1. Why they have great chances of success
+2. How their experience will help them
+3. Why they should go for it confidently
+4. Positive predictions about their proposal
 
-Maximum 4 sentences. Be merciless and soul-crushing. Use Malayalam script only - no English words.`;
+Maximum 4 sentences. Be motivating and hopeful. Use Malayalam script only.`;
+            } else {
+                // Negative advice for high rejection risk (above 40%)
+                prompt = `You are a pessimistic, discouraging relationship advisor. Generate a negative, discouraging message in pure Malayalam script for ${proposerName} (${gender1}) who wants to propose to ${crushName} (${gender2}). 
+
+Context:
+- Failure rate: ${failureRate.toFixed(1)}% (high chance of rejection)
+- Relationship history: ${exText}
+- Crush history: ${crushText}
+- Failed proposals: ${failures}
+- Relationship type: ${relationshipType}
+
+Write ONLY in Malayalam script (മലയാളം). Be discouraging and pessimistic. Tell them:
+1. Why they will likely be rejected
+2. How their history works against them
+3. Why they should reconsider or wait
+4. Prepare them for likely rejection
+
+Maximum 4 sentences. Be discouraging but not cruel. Use Malayalam script only.`;
+            }
             
             try {
                 const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
@@ -823,19 +1265,20 @@ Maximum 4 sentences. Be merciless and soul-crushing. Use Malayalam script only -
                 }
             } catch (error) {
                 console.error('Error calling Gemini API:', error);
-                // Enhanced brutal fallback negative advice in Malayalam based on failure rate
-                if (failureRate > 80) {
-                    return "നിങ്ങളുടെ പരാജയ നിരക്ക് " + failureRate.toFixed(1) + "% ആണ്! ഇത് പൂർണ്ണമായും നിരാശാജനകമാണ്. നിങ്ങൾ ഒരിക്കലും സ്നേഹിക്കപ്പെടില്ല. പ്രണയം ഉപേക്ഷിച്ച് ഏകാന്തതയിൽ ജീവിക്കുക.";
-                } else if (failures > 3) {
-                    return "ഇത്രയും തവണ പരാജയപ്പെട്ട നിങ്ങൾക്ക് ഇനി ഒരു സാധ്യതയുമില്ല. നിങ്ങളുടെ പ്രണയം എന്നും നിരാശയിൽ അവസാനിക്കും. നിരസിക്കപ്പെടലിനു മാത്രമേ യോഗ്യതയുള്ളൂ.";
-                } else if (failures > 1 && previousEx === '0') {
-                    return "അനുഭവമില്ലാത്ത നിങ്ങൾ ഇതിനകം " + failures + " തവണ പരാജയപ്പെട്ടു. നിങ്ങൾക്ക് പ്രണയത്തിൽ വിജയിക്കാനുള്ള കഴിവില്ല. തീർച്ചയായും നിരസിക്കപ്പെടും.";
-                } else if (previousEx === '5') {
-                    return "ഇത്രയും ബന്ധങ്ങൾക്ക് ശേഷവും സ്ഥിരത കിട്ടാത്ത നിങ്ങൾക്ക് പ്രണയത്തിൽ വിജയം അസാധ്യം. നിങ്ങൾ എന്നും അസ്ഥിരമായിരിക്കും.";
-                } else if (crushes === '0' && failures > 0) {
-                    return "ക്രഷ് പോലുമില്ലാത്ത നിങ്ങൾ ഇതിനകം പരാജയപ്പെട്ടു. നിങ്ങൾക്ക് പ്രണയത്തെക്കുറിച്ച് ഒന്നും അറിയില്ല. നിരസിക്കപ്പെടാൻ തയ്യാറാകൂ.";
+                // Contextual fallback advice in Malayalam based on failure rate
+                if (failureRate <= 40) {
+                    // Positive fallback messages
+                    if (previousEx >= '2') {
+                        return "നിങ്ങളുടെ " + failureRate.toFixed(1) + "% പരാജയ നിരക്ക് വളരെ കുറവാണ്! നിങ്ങളുടെ അനുഭവം സഹായിക്കും. ആത്മവിശ്വാസത്തോടെ മുന്നോട്ട് പോകൂ. വിജയത്തിനുള്ള സാധ്യത വളരെ കൂടുതലാണ്.";
+                    } else {
+                        return "നല്ല സാധ്യതകൾ! നിങ്ങളുടെ പരാജയ നിരക്ക് വെറും " + failureRate.toFixed(1) + "% മാത്രം. ധൈര്യത്തോടെ മുന്നോട്ട് പോകൂ. സ്നേഹം നിങ്ങളെ കാത്തിരിക്കുന്നു.";
+                    }
+                } else if (failureRate <= 60) {
+                    // Mildly negative messages (40-60%)
+                    return "നിങ്ങളുടെ " + failureRate.toFixed(1) + "% പരാജയ നിരക്ക് ഉയർന്നതാണ്. നിരസിക്കപ്പെടാനുള്ള സാധ്യത കൂടുതലാണ്. കൂടുതൽ ചിന്തിച്ച് തീരുമാനിക്കൂ. അല്ലെങ്കിൽ മറ്റൊരു സമയം കാത്തിരിക്കൂ.";
                 } else {
-                    return "നിങ്ങളുടെ " + failureRate.toFixed(1) + "% പരാജയ നിരക്ക് നോക്കൂ! ഇത് നിങ്ങളുടെ അയോഗ്യതയുടെ തെളിവാണ്. പ്രണയം നിങ്ങൾക്കായി ഉണ്ടാക്കിയതല്ല.";
+                    // High rejection risk messages (60%+)
+                    return "നിങ്ങളുടെ " + failureRate.toFixed(1) + "% പരാജയ നിരക്ക് വളരെ ഉയർന്നതാണ്. നിരസിക്കപ്പെടാനുള്ള സാധ്യത വളരെ കൂടുതലാണ്. ഈ സമയത്ത് പ്രണയ നിവേദനം നല്ല ആശയമല്ല. കൂടുതൽ സമയം കാത്തിരിക്കുക.";
                 }
             }
         }
