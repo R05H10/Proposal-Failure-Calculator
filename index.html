@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal Failure Rate Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: 10%;
+            right: 10%;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        select option {
+            background: #4a5568;
+            color: white;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .calculate-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        #result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #result.error {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: rgba(255, 107, 107, 0.3);
+            color: #fed7d7;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item span:first-child {
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .failure-rate {
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .malayalam-advice {
+            font-style: italic;
+            color: #ff3838;
+            line-height: 1.8;
+            direction: rtl;
+            text-align: right;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: rgba(255, 56, 56, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #ff4757;
+            border-left: 6px solid #ff3838;
+            margin-top: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 56, 56, 0.3);
+            font-family: 'Arial', 'Noto Sans Malayalam', sans-serif;
+        }
+
+        .prediction-message {
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #e2e8f0;
+        }
+
+        .advice-container {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px 0;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .malayalam-advice {
+                font-size: 1rem;
+                padding: 12px;
+                line-height: 1.6;
+            }
+        }
+
+        .success-icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>� Proposal Failure Calculator</h1>
+        
+        <form id="calculatorForm">
+            <div class="form-group">
+                <label for="name1">Your Name:</label>
+                <input type="text" id="name1" placeholder="Enter your name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="gender1">Your Gender:</label>
+                <select id="gender1" required>
+                    <option value="">Select your gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="name2">Your Crush's Name:</label>
+                <input type="text" id="name2" placeholder="Enter their name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="gender2">Your Crush's Gender:</label>
+                <select id="gender2" required>
+                    <option value="">Select their gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="failures">Number of Failed Proposals:</label>
+                <input type="number" id="failures" min="0" max="50" value="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="previousEx">Previous Relationships:</label>
+                <select id="previousEx" required>
+                    <option value="">Select experience level</option>
+                    <option value="0">None (0)</option>
+                    <option value="1">Limited (1)</option>
+                    <option value="2">Some (2-3)</option>
+                    <option value="3">Good (3-4)</option>
+                    <option value="4">Experienced (4-5)</option>
+                    <option value="5">Very Experienced (6+)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="crushes">Number of Crushes You Had:</label>
+                <select id="crushes" required>
+                    <option value="">Select number of crushes</option>
+                    <option value="0">None (0)</option>
+                    <option value="1">Very Few (1-2)</option>
+                    <option value="2">Few (3-5)</option>
+                    <option value="3">Several (6-10)</option>
+                    <option value="4">Many (11-20)</option>
+                    <option value="5">Too Many to Count (20+)</option>
+                </select>
+            </div>
+            
+            <button type="button" class="calculate-btn" onclick="calculate()">
+                <span class="btn-text">Calculate Failure Rate</span>
+            </button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function calculate() {
+            const btn = document.querySelector('.calculate-btn');
+            const btnText = document.querySelector('.btn-text');
+            const resultDiv = document.getElementById('result');
+            
+            // Get values
+            const name1 = document.getElementById('name1').value.trim();
+            const gender1 = document.getElementById('gender1').value;
+            const name2 = document.getElementById('name2').value.trim();
+            const gender2 = document.getElementById('gender2').value;
+            const failures = parseFloat(document.getElementById('failures').value) || 0;
+            const previousEx = document.getElementById('previousEx').value;
+            const crushes = document.getElementById('crushes').value;
+            
+            // Show loading state
+            btnText.innerHTML = '<span class="loading"></span>Calculating...';
+            btn.disabled = true;
+            resultDiv.classList.remove('show');
+            
+            // Add delay for loading effect
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            try {
+                // Validation
+                if (!name1 || !gender1 || !name2 || !gender2 || !previousEx || !crushes) {
+                    showResult("Please complete all fields including names, genders, relationship experience, and crushes.", true);
+                    resetButton();
+                    return;
+                }
+                
+                if (isNaN(failures) || failures < 0) {
+                    showResult("Invalid input: Please ensure failure count is non-negative.", true);
+                    resetButton();
+                    return;
+                }
+                
+                // Comprehensive Proposal Failure Calculation (No Economic Factors)
+                
+                // Calculate base factors
+                const experienceRate = calculateExperienceRate(previousEx, failures);
+                const nameCompatibility = calculateNameCompatibility(name1, name2);
+                const genderCompatibility = calculateGenderCompatibility(gender1, gender2);
+                
+                // Calculate advanced composite factors (without economic dependencies)
+                const relationshipReadiness = calculateRelationshipReadiness(previousEx, failures, gender1, gender2);
+                const personalityScore = calculatePersonalityScore(previousEx, failures, gender1, gender2);
+                const attractivenessIndex = calculateAttractivenessIndex(previousEx, failures, gender1, gender2);
+                const crushFactor = calculateCrushFactor(crushes, previousEx, failures);
+                const compatibilityIndex = calculateOverallCompatibility(nameCompatibility, genderCompatibility);
+                
+                // Calculate psychological factors (without wealth/vehicle)
+                const confidenceRate = calculateConfidenceFactor(previousEx, failures);
+                const riskFactor = calculateRiskFactor(failures, previousEx);
+                
+                // Realistic weighted calculation focusing on personal factors
+                let baseScore = (
+                    (experienceRate * 0.18) + 
+                    (compatibilityIndex * 0.18) + 
+                    (relationshipReadiness * 0.18) + 
+                    (personalityScore * 0.13) + 
+                    (attractivenessIndex * 0.13) + 
+                    (crushFactor * 0.12) +
+                    (confidenceRate * 0.08)
+                );
+                
+                // Apply risk penalty (failures have cumulative negative impact)
+                const riskPenalty = (100 - riskFactor) * 0.3; // Up to 30% penalty for high risk
+                baseScore = Math.max(baseScore - riskPenalty, 0);
+                
+                // Apply reality check modifiers (without economic factors)
+                const realityModifier = calculateRealityModifier(failures, previousEx);
+                
+                const finalSuccessRate = Math.min(95, Math.max(2, baseScore * realityModifier));
+                
+                // Convert success rate to failure rate (inverse logic)
+                const finalFailureRate = Math.min(98, Math.max(5, 100 - finalSuccessRate));
+                
+                // Determine prediction message based on failure rate
+                let predictionMessage = "";
+                
+                if (finalFailureRate >= 80) {
+                    predictionMessage = "💔 Almost Certain Failure! Prepare for rejection.";
+                } else if (finalFailureRate >= 60) {
+                    predictionMessage = "� High Failure Risk! Very likely to be rejected.";
+                } else if (finalFailureRate >= 40) {
+                    predictionMessage = "🤔 Moderate Failure Risk. Proceed with caution.";
+                } else if (finalFailureRate >= 20) {
+                    predictionMessage = "💫 Low Failure Risk. Good chances!";
+                } else {
+                    predictionMessage = "🎉 Minimal Failure Risk! Go for it!";
+                }
+                
+                // Get negative advice from Gemini API in Malayalam
+                console.log('Calling Gemini API for Malayalam advice...'); // Debug log
+                btnText.innerHTML = '<span class="loading"></span>Getting brutal advice...';
+                const geminiAdvice = await getDemotivatingAdvice(name1, name2, finalFailureRate, previousEx, failures, crushes, gender1, gender2);
+                console.log('Final Malayalam advice to display:', geminiAdvice); // Debug log
+                
+                const resultHTML = `
+                    <div class="result-item">
+                        <span><span class="success-icon">👤</span>Proposer:</span>
+                        <span class="result-value">${name1} (${gender1.charAt(0).toUpperCase() + gender1.slice(1)})</span>
+                    </div>
+                    <div class="result-item">
+                        <span>💖 Crush:</span>
+                        <span class="result-value">${name2} (${gender2.charAt(0).toUpperCase() + gender2.slice(1)})</span>
+                    </div>
+                    <div class="result-item">
+                        <span>💔 Failed Proposals:</span>
+                        <span class="result-value">${failures}</span>
+                    </div>
+                    <div class="result-item">
+                        <span>💕 Previous Relationships:</span>
+                        <span class="result-value">${previousEx === '0' ? 'None' : previousEx === '5' ? '6+' : previousEx === '4' ? '4-5' : previousEx}</span>
+                    </div>
+                    <div class="result-item">
+                        <span>� Total Crushes:</span>
+                        <span class="result-value">${crushes === '0' ? 'None' : crushes === '5' ? '20+' : crushes === '4' ? '11-20' : crushes === '3' ? '6-10' : crushes === '2' ? '3-5' : '1-2'}</span>
+                    </div>
+                    <div class="result-item">
+                        <span>�📈 Experience Factor:</span>
+                        <span class="result-value">${experienceRate.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>💝 Name Compatibility:</span>
+                        <span class="result-value">${nameCompatibility.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>⚤ Gender Compatibility:</span>
+                        <span class="result-value">${genderCompatibility.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>🧠 Personality Score:</span>
+                        <span class="result-value">${personalityScore.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>✨ Attractiveness Index:</span>
+                        <span class="result-value">${attractivenessIndex.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>� Crush Experience Factor:</span>
+                        <span class="result-value">${crushFactor.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>�💪 Relationship Readiness:</span>
+                        <span class="result-value">${relationshipReadiness.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>😎 Confidence Level:</span>
+                        <span class="result-value">${confidenceRate.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>⚠️ Risk Assessment:</span>
+                        <span class="result-value">${riskFactor.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>🎯 Final Failure Probability:</span>
+                        <span class="result-value failure-rate">${finalFailureRate.toFixed(1)}%</span>
+                    </div>
+                    <div class="result-item advice-container">
+                        <span class="prediction-message">${predictionMessage}</span>
+                        <div style="margin-top: 10px; margin-bottom: 8px; font-weight: 700; color: #ff4757; font-size: 1rem;">🤖 AI Brutal Truth (Malayalam):</div>
+                        <div class="malayalam-advice">${geminiAdvice}</div>
+                    </div>
+                `;
+                
+                showResult(resultHTML, false);
+                resetButton();
+            } catch (error) {
+                console.error('Error in calculation:', error);
+                showResult("An error occurred while calculating. Please try again.", true);
+                resetButton();
+            }
+        }
+        
+        function showResult(content, isError) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = content;
+            resultDiv.classList.toggle('error', isError);
+            resultDiv.classList.add('show');
+        }
+        
+        function resetButton() {
+            const btn = document.querySelector('.calculate-btn');
+            const btnText = document.querySelector('.btn-text');
+            btnText.innerHTML = 'Calculate Failure Rate';
+            btn.disabled = false;
+        }
+        
+        // Helper functions for advanced calculations
+        function calculateNameCompatibility(name1, name2) {
+            // Calculate compatibility based on common letters and name harmony
+            const n1 = name1.toLowerCase().replace(/\s+/g, '');
+            const n2 = name2.toLowerCase().replace(/\s+/g, '');
+            
+            // Count common letters
+            const commonLetters = n1.split('').filter(letter => n2.includes(letter)).length;
+            const totalLetters = Math.max(n1.length, n2.length);
+            const letterCompatibility = (commonLetters / totalLetters) * 100;
+            
+            // Name length harmony (similar lengths are more compatible)
+            const lengthDifference = Math.abs(n1.length - n2.length);
+            const lengthCompatibility = Math.max(0, 100 - (lengthDifference * 10));
+            
+            // Average the two factors
+            return (letterCompatibility + lengthCompatibility) / 2;
+        }
+        
+        function calculateGenderCompatibility(gender1, gender2) {
+            // Calculate compatibility based on gender preferences
+            // This is a simplified algorithm for demonstration
+            if (gender1 === gender2) {
+                return 75; // Same gender relationships face unique challenges but also understanding
+            } else {
+                return 85; // Different gender relationships have traditional societal support
+            }
+        }
+        
+        function calculateExperienceRate(previousEx, failures) {
+            const exValue = parseInt(previousEx);
+            let baseExperience = 50; // Default base
+            
+            // Experience level adjustments
+            switch(exValue) {
+                case 0:
+                    baseExperience = 35; // No experience
+                    break;
+                case 1:
+                    baseExperience = 50; // Some experience
+                    break;
+                case 2:
+                    baseExperience = 65; // Good experience
+                    break;
+                case 3:
+                    baseExperience = 75; // Very good experience
+                    break;
+                case 4:
+                    baseExperience = 80; // Excellent experience
+                    break;
+                case 5:
+                    baseExperience = 70; // Might be seen as too much experience
+                    break;
+                default:
+                    baseExperience = 50;
+            }
+            
+            // Reduce score based on failures
+            const failurePenalty = Math.min(failures * 8, 40); // Max 40% penalty
+            return Math.max(10, baseExperience - failurePenalty);
+        }
+        
+        function calculateConfidenceFactor(previousEx, failures) {
+            // Calculate confidence based on experience and past failures
+            let confidence = 60; // Higher base confidence without economic factors
+            
+            // Experience impact on confidence
+            const exValue = parseInt(previousEx);
+            if (exValue === 0) confidence -= 15; // No experience reduces confidence
+            else if (exValue >= 2) confidence += 20; // Good experience boosts confidence
+            else if (exValue === 1) confidence += 10; // Some experience helps
+            
+            // Failure impact on confidence (cumulative damage)
+            confidence -= failures * 15;
+            
+            return Math.min(100, Math.max(10, confidence));
+        }
+        
+        function calculateRiskFactor(failures, previousEx) {
+            // Calculate risk assessment (higher is better)
+            let risk = 80; // Base optimistic risk
+            
+            // Failure impact
+            risk -= failures * 12; // Each failure reduces risk score
+            
+            // Experience impact on risk management
+            const exValue = parseInt(previousEx);
+            if (exValue >= 2) risk += 10; // Experience helps manage risk
+            if (exValue === 0) risk -= 5; // No experience increases risk
+            
+            return Math.min(100, Math.max(10, risk));
+        }
+        
+        // Enhanced calculation functions for improved logic
+        function calculatePersonalityScore(previousEx, failures, gender1, gender2) {
+            let personalityScore = 70; // Good base personality score
+            
+            // Experience contributes to personality development
+            const exValue = parseInt(previousEx);
+            switch(exValue) {
+                case 0: personalityScore -= 10; break; // Less developed social skills
+                case 1: personalityScore += 5; break;  // Some growth
+                case 2: personalityScore += 15; break; // Good balance
+                case 3: personalityScore += 20; break; // Well developed
+                case 4: personalityScore += 15; break; // Very experienced
+                case 5: personalityScore += 5; break;  // Might have issues
+            }
+            
+            // Failures impact personality confidence
+            personalityScore -= failures * 8; // Each failure reduces confidence
+            
+            // Gender dynamics (simplified)
+            if (gender1 === gender2) personalityScore += 5; // Same gender understanding
+            
+            return Math.min(100, Math.max(20, personalityScore));
+        }
+        
+        function calculateCrushFactor(crushes, previousEx, failures) {
+            const crushValue = parseInt(crushes);
+            const exValue = parseInt(previousEx);
+            let crushScore = 60; // Base crush experience score
+            
+            // Crush experience adjustments (more crushes = better understanding but also higher standards)
+            switch(crushValue) {
+                case 0: crushScore -= 20; break; // No crush experience - very naive
+                case 1: crushScore += 5; break;  // Limited experience - still learning
+                case 2: crushScore += 15; break; // Good balance - knows what they want
+                case 3: crushScore += 10; break; // Experienced but realistic
+                case 4: crushScore += 5; break;  // Many crushes - might have commitment issues
+                case 5: crushScore -= 10; break; // Too many crushes - unrealistic expectations
+            }
+            
+            // Balance with actual relationship experience
+            if (exValue === 0 && crushValue > 3) {
+                crushScore -= 15; // Many crushes but no relationships = unrealistic
+            } else if (exValue > 2 && crushValue < 2) {
+                crushScore += 10; // Good relationships with few crushes = focused approach
+            }
+            
+            // Failures impact crush confidence
+            crushScore -= failures * 6; // Each failure reduces confidence in crush approach
+            
+            return Math.min(100, Math.max(10, crushScore));
+        }
+        
+        function calculateRelationshipReadiness(previousEx, failures, gender1, gender2) {
+            const exValue = parseInt(previousEx);
+            let readiness = 50; // Base readiness
+            
+            // Experience factor
+            if (exValue === 0) readiness -= 15; // No experience
+            else if (exValue >= 2) readiness += 20; // Good experience
+            else readiness += 10; // Some experience
+            
+            // Failure impact (more severe for higher failures)
+            const failureImpact = failures * (failures + 5); // Exponential penalty
+            readiness -= Math.min(failureImpact, 40);
+            
+            // Gender dynamics
+            if (gender1 !== gender2) readiness += 5; // Slight boost for traditional relationships
+            
+            return Math.min(100, Math.max(0, readiness));
+        }
+        
+        function calculateAttractivenessIndex(previousEx, failures, gender1, gender2) {
+            let attractiveness = 55; // Base attractiveness (personality-based)
+            
+            // Experience adds confidence and social skills
+            const exValue = parseInt(previousEx);
+            if (exValue === 0) attractiveness -= 10; // Less social confidence
+            else if (exValue >= 2) attractiveness += 15; // Good social skills
+            else attractiveness += 5; // Some social development
+            
+            // Failures reduce confidence and attractiveness
+            attractiveness -= failures * 10;
+            
+            // Gender compatibility factor
+            if (gender1 !== gender2) attractiveness += 8; // Traditional attraction
+            else attractiveness += 5; // Same gender understanding
+            
+            return Math.min(100, Math.max(15, attractiveness));
+        }
+        
+        function calculateOverallCompatibility(nameCompatibility, genderCompatibility) {
+            // Weighted combination of compatibility factors
+            return (nameCompatibility * 0.3) + (genderCompatibility * 0.7);
+        }
+        
+        function calculateRealityModifier(failures, previousEx) {
+            let modifier = 1.0; // Base reality check
+            
+            // Severe reality check for multiple failures
+            if (failures >= 3) modifier *= 0.5; // 50% reduction for many failures
+            else if (failures >= 2) modifier *= 0.7; // 30% reduction
+            else if (failures >= 1) modifier *= 0.85; // 15% reduction
+            
+            // No experience penalty with failures
+            const exValue = parseInt(previousEx);
+            if (exValue === 0 && failures > 0) {
+                modifier *= 0.75; // Learning curve penalty
+            }
+            
+            // Too much experience might indicate issues
+            if (exValue >= 5) {
+                modifier *= 0.9; // Slight penalty for too many relationships
+            }
+            
+            return Math.max(0.2, modifier); // Minimum 20% of base score
+        }
+        
+        // Function to get demotivating advice in Malayalam from Gemini API
+        async function getDemotivatingAdvice(proposerName, crushName, failureRate, previousEx, failures, crushes, gender1, gender2) {
+            const exText = previousEx === '0' ? 'no previous relationships' : 
+                          previousEx === '5' ? '6+ previous relationships' : 
+                          previousEx === '4' ? '4-5 previous relationships' : 
+                          `${previousEx} previous relationships`;
+            
+            const crushText = crushes === '0' ? 'no previous crushes' :
+                             crushes === '5' ? '20+ crushes' :
+                             crushes === '4' ? '11-20 crushes' :
+                             crushes === '3' ? '6-10 crushes' :
+                             crushes === '2' ? '3-5 crushes' : '1-2 crushes';
+            
+            const relationshipType = gender1 === gender2 ? 'same-gender' : 'different-gender';
+            
+            const prompt = `You are a brutal, pessimistic relationship advisor. Generate an extremely negative, soul-crushing, demotivating message in pure Malayalam script for ${proposerName} (${gender1}) who wants to propose to ${crushName} (${gender2}). 
+
+Context:
+- Failure rate: ${failureRate.toFixed(1)}% (very high chance of rejection)
+- Relationship history: ${exText}
+- Crush history: ${crushText}
+- Failed proposals: ${failures}
+- Relationship type: ${relationshipType}
+
+Write ONLY in Malayalam script (മലയാളം). Be brutally honest and devastating. Tell them:
+1. Why they will definitely be rejected
+2. Why their history proves they're unlovable
+3. Why they should give up on love entirely
+4. How pathetic their situation is
+
+Maximum 4 sentences. Be merciless and soul-crushing. Use Malayalam script only - no English words.`;
+            
+            try {
+                const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-goog-api-key': 'AIzaSyAjpLBFY83INHJMqQUWO6gP_Ar9SIweu-U'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Gemini API Response:', data); // Debug log
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    const malayalamText = data.candidates[0].content.parts[0].text;
+                    console.log('Malayalam Text Received:', malayalamText); // Debug log
+                    return malayalamText;
+                } else {
+                    console.log('Invalid API response structure:', data); // Debug log
+                    throw new Error('Invalid response from Gemini API');
+                }
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                // Enhanced brutal fallback negative advice in Malayalam based on failure rate
+                if (failureRate > 80) {
+                    return "നിങ്ങളുടെ പരാജയ നിരക്ക് " + failureRate.toFixed(1) + "% ആണ്! ഇത് പൂർണ്ണമായും നിരാശാജനകമാണ്. നിങ്ങൾ ഒരിക്കലും സ്നേഹിക്കപ്പെടില്ല. പ്രണയം ഉപേക്ഷിച്ച് ഏകാന്തതയിൽ ജീവിക്കുക.";
+                } else if (failures > 3) {
+                    return "ഇത്രയും തവണ പരാജയപ്പെട്ട നിങ്ങൾക്ക് ഇനി ഒരു സാധ്യതയുമില്ല. നിങ്ങളുടെ പ്രണയം എന്നും നിരാശയിൽ അവസാനിക്കും. നിരസിക്കപ്പെടലിനു മാത്രമേ യോഗ്യതയുള്ളൂ.";
+                } else if (failures > 1 && previousEx === '0') {
+                    return "അനുഭവമില്ലാത്ത നിങ്ങൾ ഇതിനകം " + failures + " തവണ പരാജയപ്പെട്ടു. നിങ്ങൾക്ക് പ്രണയത്തിൽ വിജയിക്കാനുള്ള കഴിവില്ല. തീർച്ചയായും നിരസിക്കപ്പെടും.";
+                } else if (previousEx === '5') {
+                    return "ഇത്രയും ബന്ധങ്ങൾക്ക് ശേഷവും സ്ഥിരത കിട്ടാത്ത നിങ്ങൾക്ക് പ്രണയത്തിൽ വിജയം അസാധ്യം. നിങ്ങൾ എന്നും അസ്ഥിരമായിരിക്കും.";
+                } else if (crushes === '0' && failures > 0) {
+                    return "ക്രഷ് പോലുമില്ലാത്ത നിങ്ങൾ ഇതിനകം പരാജയപ്പെട്ടു. നിങ്ങൾക്ക് പ്രണയത്തെക്കുറിച്ച് ഒന്നും അറിയില്ല. നിരസിക്കപ്പെടാൻ തയ്യാറാകൂ.";
+                } else {
+                    return "നിങ്ങളുടെ " + failureRate.toFixed(1) + "% പരാജയ നിരക്ക് നോക്കൂ! ഇത് നിങ്ങളുടെ അയോഗ്യതയുടെ തെളിവാണ്. പ്രണയം നിങ്ങൾക്കായി ഉണ്ടാക്കിയതല്ല.";
+                }
+            }
+        }
+        
+        // Add enter key support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+        
+        // Add input animations
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.previousElementSibling.style.color = '#667eea';
+                this.previousElementSibling.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.previousElementSibling.style.color = '#4a5568';
+                this.previousElementSibling.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
