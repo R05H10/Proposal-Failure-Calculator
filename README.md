@@ -1,11 +1,80 @@
-<img width="3188" height="1202" alt="frame (3)" src="https://github.com/user-attachments/assets/517ad8e9-ad22-457d-9538-a9e62d137cd7" />
+# Mathematical Treasure Hunt Game 🏴‍☠️
 
+A fun, interactive puzzle game where players solve interconnected mathematical problems to unlock treasure boxes!
 
-# [Project Name] 🎯
+## Features
 
+- 🧮 **5 Interconnected Mathematical Puzzles**: Each answer feeds into the next puzzle
+- 🏴‍☠️ **Treasure Hunt Theme**: Pirate-themed adventure with treasure boxes
+- 🎲 **Element of Luck**: Multiple treasure boxes with random rewards
+- 💰 **Various Outcomes**: Rewards, clues, or humorous insults
+- 🎨 **User-Friendly GUI**: Built with Python tkinter
+- 🔄 **Replayable**: Start over anytime for a new adventure
 
-## Basic Details
-### Team Name: [Name]
+## How to Play
+
+1. **Welcome Screen**: Read the instructions and start your adventure
+2. **Solve Puzzles**: Work through 5 mathematical challenges
+   - Each puzzle uses the answer from the previous one
+   - Use hints if you get stuck
+3. **Treasure Room**: Choose from 6 mysterious boxes
+4. **Win or Try Again**: Find the treasure or get clues/insults!
+
+## Mathematical Puzzles Include:
+- Prime number calculations
+- Algebraic operations
+- Square roots
+- Factorials
+- Sequential problem solving
+
+## Installation & Running
+
+### Prerequisites
+- Python 3.x (tkinter is included by default)
+
+### Running the Game
+```bash
+python treasure_hunt_game.py
+```
+
+## Game Flow
+
+```
+Welcome Screen
+     ↓
+Puzzle 1: Sum of first 5 primes (Answer: 28)
+     ↓
+Puzzle 2: 28² - 100 (Answer: 684)
+     ↓
+Puzzle 3: √684 (Answer: ~26)
+     ↓
+Puzzle 4: 3×26 + 22 (Answer: 100)
+     ↓
+Puzzle 5: 5! - 100 (Answer: 20)
+     ↓
+Treasure Room: Choose from 6 boxes
+     ↓
+Victory or Try Again!
+```
+
+## Features in Detail
+
+### Interconnected Puzzles
+Each mathematical problem builds upon the previous answer, creating a chain of logical problem-solving.
+
+### Treasure Box System
+- 6 treasure boxes to choose from
+- Only 1 contains the real treasure
+- Others contain either helpful clues or humorous insults
+- Element of luck adds excitement
+
+### User Experience
+- Visual feedback with emojis and colors
+- Hint system for stuck players
+- Progress tracking
+- Restart functionality
+
+## Team Name: Math Pirates
 
 
 ### Team Members
