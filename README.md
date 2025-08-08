@@ -14,26 +14,22 @@
 - Member 3: [Name] - [College]
 
 ### Project Description
-[2-3 lines about what your project does]
+A humorous web application that calculates the "failure rate" of a romantic proposal based on user inputs like names, genders, past relationships, and crush history, with AI-generated advice in Malayalam for a fun, culturally flavored touch.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+In a world where love is a gamble, how do you know if your proposal will crash and burn? Fear not, for we solve the non-existent crisis of quantifying your romantic doom with precision!
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+Our Proposal Failure Rate Calculator uses a tongue-in-cheek algorithm to predict your chances of rejection, factoring in name compatibility, gender dynamics, and past romantic misadventures, topped off with witty AI advice in Malayalam to either boost your ego or prepare you for heartbreak!
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
 
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+- Languages Used: HTML, CSS, JavaScript
+- Frameworks Used: None
+- Libraries Used: None
+- Tools Used: Visual Studio Code, Git, Google Fonts, Gemini API (for AI-generated Malayalam advice)
 
 ### Implementation
 For Software:
@@ -54,20 +50,7 @@ For Software:
 *Add caption explaining what this shows*
 
 ![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
-
-# Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
-
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
+*Add caption explaining what this shows
 
 # Build Photos
 ![Components](Add photo of your components here)
@@ -88,9 +71,8 @@ For Hardware:
 [Add any extra demo materials/links]
 
 ## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- ROHAN K SHINE : FrontEnd and BackEnd Development
+- ROSHAN SUBHASH : FrontEnd and BackEnd Development
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
