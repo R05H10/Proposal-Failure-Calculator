@@ -1,17 +1,17 @@
 <img width="3188" height="1202" alt="frame (3)" src="https://github.com/user-attachments/assets/517ad8e9-ad22-457d-9538-a9e62d137cd7" />
 
 
-# [Project Name] 🎯
+Proposal Failure Calculator 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: Viper_boiz
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+
+- ROHAN K SHINE - SCMS School Of Engineering And Technology
+- ROSHAN SUBHASH - SCMS School OF Engineering And Technology
 
 ### Project Description
 A humorous web application that calculates the "failure rate" of a romantic proposal based on user inputs like names, genders, past relationships, and crush history, with AI-generated advice in Malayalam for a fun, culturally flavored touch.
