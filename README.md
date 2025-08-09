@@ -62,7 +62,8 @@ https://github.com/user-attachments/assets/b2be4ace-6c91-44d3-8a9b-9d87effb560b
  
  
   
-  flowchart TD
+```mermaid
+flowchart TD
     A[User] --> B[Open Calculator Page (index.html)]
     B --> C[Input Data:<br>- Name, Gender (Proposer & Crush)<br>- Past Failures<br>- Previous Relationships<br>- Crush History]
     C --> D[Click "Calculate"]
@@ -75,6 +76,8 @@ https://github.com/user-attachments/assets/b2be4ace-6c91-44d3-8a9b-9d87effb560b
     J --> K[Display:<br>- User Info<br>- Failure Probability<br>- Prediction Message<br>- Malayalam Advice]
     K --> L[Option: "Calculate Again"]
     L --> B
+```
+
 
 
 
