@@ -34,33 +34,16 @@ For Software:
 ### Implementation
 For Software:
 # Installation
-git clone
+git clone https://github.com/R05H10/Proposal-Failure-Calculator.git
+cd Proposal-Failure-Calculator
 
 # Run
-[commands]
+https://proposal-failure-calculator.vercel.app/
 
 ### Project Documentation
 For Software:
 
-# Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
-
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
-
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows
-
-# Build Photos
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
+# Screenshots 
 
 ### Project Demo
 # Video
