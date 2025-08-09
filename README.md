@@ -36,6 +36,8 @@ For Software:
 For Software:
 # Installation
 git clone https://github.com/R05H10/Proposal-Failure-Calculator.git
+
+
 cd Proposal-Failure-Calculator
 
 # Run
