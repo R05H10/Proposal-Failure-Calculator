@@ -65,17 +65,18 @@ https://github.com/user-attachments/assets/b2be4ace-6c91-44d3-8a9b-9d87effb560b
 ```mermaid
 flowchart TD
     A[User] --> B[Open Calculator Page (index.html)]
-    B --> C[Input Data:<br>- Name, Gender (Proposer & Crush)<br>- Past Failures<br>- Previous Relationships<br>- Crush History]
+    B --> C[Input Data: Name, Gender, History]
     C --> D[Click "Calculate"]
     D --> E[Client-side JS Validation]
     E --> F[Run Calculation Functions]
-    F --> G[Compute Failure Rate & Generate Advice]
-    G --> H[Store Results (localStorage)]
+    F --> G[Compute Failure Rate and Advice]
+    G --> H[Store Results in localStorage]
     H --> I[Redirect to Results Page (results.html)]
     I --> J[Load Results from localStorage or URL]
-    J --> K[Display:<br>- User Info<br>- Failure Probability<br>- Prediction Message<br>- Malayalam Advice]
-    K --> L[Option: "Calculate Again"]
+    J --> K[Display: User Info, Probability, Message, Advice]
+    K --> L["Calculate Again" → Return to Calculator]
     L --> B
+
 ```
 
 
