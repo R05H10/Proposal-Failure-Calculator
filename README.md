@@ -56,6 +56,49 @@ For Software:
 https://github.com/user-attachments/assets/b2be4ace-6c91-44d3-8a9b-9d87effb560b
 
 # Workflow Diagram
+ 
+  [User]
+   |
+   v
+[Open Calculator Page (index.html)]
+   |
+   v
+[Input Data: 
+  - Name, Gender (Proposer & Crush)
+  - Past Failures
+  - Previous Relationships
+  - Crush History]
+   |
+   v
+[Click "Calculate"]
+   |
+   v
+[Client-side JS Validation]
+   |
+   v
+[Run Calculation Functions]
+   |
+   v
+[Compute Failure Rate & Generate Advice]
+   |
+   v
+[Store Results (localStorage)]
+   |
+   v
+[Redirect to Results Page (results.html)]
+   |
+   v
+[Load Results From localStorage or URL]
+   |
+   v
+[Display:
+  - User info
+  - Failure Probability
+  - Prediction Message
+  - Malayalam Advice]
+   |
+   v
+[Option: "Calculate Again" → Return to Calculator]
 
   
 
