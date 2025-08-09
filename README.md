@@ -66,16 +66,17 @@ https://github.com/user-attachments/assets/b2be4ace-6c91-44d3-8a9b-9d87effb560b
 flowchart TD
     A[User] --> B[Open Calculator Page]
     B --> C[Input Data: Name, Gender, History]
-    C --> D[Click "Calculate"]
+    C --> D[Click Calculate]
     D --> E[Client-side Validation]
     E --> F[Run Calculations]
-    F --> G[Compute Failure Rate & Advice]
+    F --> G[Compute Failure Rate and Advice]
     G --> H[Store Results in localStorage]
     H --> I[Redirect to Results Page]
     I --> J[Load Results from Storage or URL]
     J --> K[Display Results: Info, Probability, Advice]
-    K --> L["Calculate Again"]
+    K --> L[Calculate Again]
     L --> B
+
 ```
 
 
