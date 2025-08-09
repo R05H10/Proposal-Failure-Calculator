@@ -64,15 +64,15 @@ For Software:
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
 
-# Additional Demos
-[Add any extra demo materials/links]
+
+https://github.com/user-attachments/assets/b2be4ace-6c91-44d3-8a9b-9d87effb560b
+
+
 
 ## Team Contributions
-- ROHAN K SHINE : FrontEnd and BackEnd Development
-- ROSHAN SUBHASH : FrontEnd and BackEnd Development
+- ROHAN K SHINE : FrontEnd and BackEnd Development And Hosting
+- ROSHAN SUBHASH : FrontEnd and BackEnd Development And Hosting
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
