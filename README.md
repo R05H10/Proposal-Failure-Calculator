@@ -44,6 +44,10 @@ https://proposal-failure-calculator.vercel.app/
 For Software:
 
 # Screenshots 
+![WhatsApp Image 2025-08-09 at 06 34 28_48fd3eda](https://github.com/user-attachments/assets/faa0ffcf-2104-4966-a0d8-4e6ceb569f95)
+![WhatsApp Image 2025-08-09 at 06 34 28_13e04a35](https://github.com/user-attachments/assets/642a2087-48e0-4308-8612-7b7f3299a442)
+![WhatsApp Image 2025-08-09 at 06 34 28_5ccebc9a](https://github.com/user-attachments/assets/d2d48342-b799-4dbc-bf39-b0bb7140e7aa)
+
 
 ### Project Demo
 # Video
