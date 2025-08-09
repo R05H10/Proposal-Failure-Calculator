@@ -4,7 +4,8 @@
 Proposal Failure Calculator 🎯
 
 
-## Basic Details
+Live Link : https://proposal-failure-calculator.vercel.app/
+
 ### Team Name: Viper_boiz
 
 
